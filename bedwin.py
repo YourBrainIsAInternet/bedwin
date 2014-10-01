@@ -26,14 +26,27 @@ def add_user(name, email, listingid=None, wantedid=None):
     userid = str(uuid.uuid4())
     print userid
     c.execute("INSERT INTO user VALUES (?, ?, ?, ?, ?)", [userid, name, email, listingid, wantedid])
+    return userid
+
+def add_listing(userid, rent, utilities, location, bedrooms):
+    locationid = str(uuid.uuid4())
+    c.execute("INSERT INTO current VALUES (?, ?, ?, ?, ?, ?)", [locationid, userid, rent, utilities, location, bedrooms])
+    c.execute("UPDATE user SET listingid = ? WHERE userid = ?", [locationid, userid])
 
 def list_users():
     c.execute('SELECT * FROM user')
     print [x for x in c]
 
+def list_listings():
+    c.execute('SELECT * FROM current')
+    print [x for x in c]
+
+
 create_table()
-add_user('Cool Renter', 'hate@broker.com')
+firstuser = add_user('Cool Renter', 'hate@broker.com')
+add_listing(firstuser, 30000, 100, 'farmville', 44) 
 list_users()
+list_listings()
 
 
 @app.route('/')
